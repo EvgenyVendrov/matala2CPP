@@ -1,9 +1,7 @@
 #include "Tree.hpp"
 #include "TreeNode.hpp"
-#include <iostream>
-#include <string>
 
-//constuctors
+//constuctor
 ariel::Tree::Tree()
 {
     this->_root = nullptr;
@@ -27,6 +25,7 @@ void ariel::Tree::insert(int i)
     }
 }
 
+//insert private supporting method
 void ariel::Tree::insert(TreeNode *current, int i)
 {
     if (current->getValue() > i)
@@ -61,6 +60,7 @@ bool ariel::Tree::contains(int i)
     return (ariel::Tree::contains(this->_root, i));
 }
 
+//contains private supporting method
 bool ariel::Tree::contains(TreeNode *current, int i)
 {
     if (current == nullptr)
@@ -87,6 +87,7 @@ int ariel::Tree::size()
     return (ariel::Tree::size(this->_root));
 }
 
+//size private supporting method
 int ariel::Tree::size(TreeNode *current)
 {
     if (current == nullptr)
@@ -95,11 +96,13 @@ int ariel::Tree::size(TreeNode *current)
         return (ariel::Tree::size(current->getLeftSon()) + 1 + ariel::Tree::size(current->getRightSon()));
 }
 
+//root method
 int ariel::Tree::root()
 {
     return (this->_root->getValue());
 }
 
+//parent method
 int ariel::Tree::parent(int i)
 {
     if (!(this->contains(i)))
@@ -110,6 +113,7 @@ int ariel::Tree::parent(int i)
     return (Tree::parent(this->_root, i));
 }
 
+//parent private supporting method
 int ariel::Tree::parent(TreeNode *current, int i)
 {
     if ((current->getLeftSon()->getValue() == i) || (current->getRightSon()->getValue() == i))
@@ -126,6 +130,7 @@ int ariel::Tree::parent(TreeNode *current, int i)
     }
 }
 
+//left method
 int ariel::Tree::left(int i)
 {
     if (!this->contains(i))
@@ -136,6 +141,7 @@ int ariel::Tree::left(int i)
     return (Tree::left(this->_root, i));
 }
 
+//left private supporting method
 int ariel::Tree::left(TreeNode *current, int i)
 {
     if ((current->getValue() == i))
@@ -160,6 +166,7 @@ int ariel::Tree::left(TreeNode *current, int i)
     }
 }
 
+//right method
 int ariel::Tree::right(int i)
 {
     if (!this->contains(i))
@@ -170,6 +177,7 @@ int ariel::Tree::right(int i)
     return (Tree::right(this->_root, i));
 }
 
+//right private supporting method
 int ariel::Tree::right(TreeNode *current, int i)
 {
     if ((current->getValue() == i))
@@ -194,11 +202,13 @@ int ariel::Tree::right(TreeNode *current, int i)
     }
 }
 
+//print method
 void ariel::Tree::print()
 {
     ariel::Tree::print(this->_root);
 }
 
+//print private supporting method
 void ariel::Tree::print(TreeNode *current)
 {
     if (current == nullptr)
@@ -211,5 +221,56 @@ void ariel::Tree::print(TreeNode *current)
     if (current->getRightSon() != nullptr)
     {
         Tree::print(current->getRightSon());
+    }
+}
+
+//remove method
+void ariel::Tree::remove(int i)
+{
+    if (this->_root == nullptr)
+    {
+        throw std::invalid_argument("you are trying to remove node from an empty tree");
+    }
+    if (!(this->contains(i)))
+    {
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument("there is no node with the key: " + nodeValue + " in this tree");
+    }
+
+    ariel::Tree::remove(this->_root, i);
+}
+
+//remove private supporting method
+void ariel::Tree::remove(TreeNode *current, int i)
+{
+    if ((current->getValue() == i))
+    {
+        current = nullptr;
+        return;
+    }
+    else if (current->getValue() > i)
+    {
+        remove(current->getLeftSon(), i);
+    }
+    else
+    {
+        remove(current->getRightSon(), i);
+    }
+}
+
+//destructor
+ariel::Tree::~Tree()
+{
+    if (this->_root != nullptr)
+        ariel::Tree::destroyTree(this->_root);
+}
+
+//private supporting method for destructor
+void ariel::Tree::destroyTree(TreeNode *current)
+{
+    if (current != nullptr){
+        ariel::Tree::destroyTree(current->getLeftSon());
+        ariel::Tree::destroyTree(current->getRightSon());
+        delete current;
     }
 }
