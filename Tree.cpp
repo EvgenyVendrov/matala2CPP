@@ -227,14 +227,22 @@ void ariel::Tree::print(TreeNode *current)
 //remove method
 void ariel::Tree::remove(int i)
 {
+    
     if (this->_root == nullptr)
     {
         throw std::invalid_argument("you are trying to remove node from an empty tree");
     }
+
     if (!(this->contains(i)))
     {
         std::string nodeValue = std::to_string(i);
         throw std::invalid_argument("there is no node with the key: " + nodeValue + " in this tree");
+    }
+
+    if (this->_root->getLeftSon() == nullptr && this->_root->getRightSon() == nullptr)
+    {
+        this->_root=nullptr;
+        return;
     }
 
     ariel::Tree::remove(this->_root, i);
@@ -243,21 +251,89 @@ void ariel::Tree::remove(int i)
 //remove private supporting method
 void ariel::Tree::remove(TreeNode *current, int i)
 {
-    if ((current->getValue() == i))
+    if (current->getLeftSon()->getValue() == i)
     {
-        current = nullptr;
-        return;
+        if ((current->getLeftSon()->getLeftSon() == nullptr) && (current->getLeftSon()->getRightSon() == nullptr))
+        {
+            current->setLeftSon(nullptr);
+            return;
+        }
+        else if (((current->getLeftSon()->getLeftSon() != nullptr) && (current->getLeftSon()->getRightSon() == nullptr)))
+        {
+            TreeNode *temp = current->getLeftSon()->getLeftSon();
+            current->setLeftSon(temp);
+            current->getLeftSon()->setLeftSon(nullptr);
+            return;
+        }
+        else if (((current->getLeftSon()->getLeftSon() == nullptr) && (current->getLeftSon()->getRightSon() != nullptr)))
+        {
+            TreeNode *temp = current->getLeftSon()->getRightSon();
+            current->setLeftSon(temp);
+            current->getLeftSon()->setRightSon(nullptr);
+            return;
+        }
+        else
+        {
+            int temp = ariel::Tree::findMin(current->getLeftSon()->getRightSon());
+            current->setValue(temp);
+            ariel::Tree::remove(temp);
+        }
+    }
+    if (current->getRightSon()->getValue() == i)
+    {
+        if ((current->getRightSon()->getLeftSon() == nullptr) && (current->getRightSon()->getRightSon() == nullptr))
+        {
+            current->setRightSon(nullptr);
+            return;
+        }
+        else if (((current->getRightSon()->getLeftSon() != nullptr) && (current->getRightSon()->getRightSon() == nullptr)))
+        {
+            TreeNode *temp = current->getRightSon()->getLeftSon();
+            current->setRightSon(temp);
+            current->getRightSon()->setLeftSon(nullptr);
+            return;
+        }
+        else if (((current->getRightSon()->getLeftSon() == nullptr) && (current->getRightSon()->getRightSon() != nullptr)))
+        {
+            TreeNode *temp = current->getRightSon()->getRightSon();
+            current->setRightSon(temp);
+            current->getRightSon()->setRightSon(nullptr);
+            return;
+        }
+        else
+        {
+            int temp = ariel::Tree::findMin(current->getRightSon()->getRightSon());
+            current->setValue(temp);
+            ariel::Tree::remove(temp);
+        }
     }
     else if (current->getValue() > i)
     {
         remove(current->getLeftSon(), i);
     }
-    else
+    else if (current->getValue() < i)
     {
         remove(current->getRightSon(), i);
     }
+    else
+    {
+        int temp = ariel::Tree::findMin(current->getRightSon());
+        current->setValue(temp);
+        ariel::Tree::remove(temp);
+    }
 }
-
+//private supporting method to "help" remove method in case both children exist
+int ariel::Tree::findMin(TreeNode *current)
+{
+    if (current->getLeftSon() == nullptr)
+    {
+        return (current->getValue());
+    }
+    else
+    {
+        return (ariel::Tree::findMin(current->getLeftSon()));
+    }
+}
 //destructor
 ariel::Tree::~Tree()
 {
@@ -268,7 +344,8 @@ ariel::Tree::~Tree()
 //private supporting method for destructor
 void ariel::Tree::destroyTree(TreeNode *current)
 {
-    if (current != nullptr){
+    if (current != nullptr)
+    {
         ariel::Tree::destroyTree(current->getLeftSon());
         ariel::Tree::destroyTree(current->getRightSon());
         delete current;

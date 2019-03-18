@@ -35,7 +35,10 @@ int main() {
          << threetree.left(5)     // should print 3
          << threetree.right(5)    // should print 7
          << endl;
-    threetree.insert(5);    // should throw an exception, since 5 already exists.
+    //threetree.insert(5);    // should throw an exception, since 5 already exists.
+    threetree.remove(5);
+    threetree.print();
+    // threetree.remove(5);
   } catch (...) {
     cout << "Caught exception!" << endl;
   }
