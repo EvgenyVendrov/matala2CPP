@@ -1,3 +1,4 @@
+#pragma once 
 class TreeNode
 {
     int _value;

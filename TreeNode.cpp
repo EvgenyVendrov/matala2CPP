@@ -1,6 +1,5 @@
 #include <iostream>
 #include "TreeNode.hpp"
-
 TreeNode::TreeNode()
 {
     this->_value = 0;
@@ -49,9 +48,9 @@ TreeNode* TreeNode::getLeftSon()
 
 TreeNode* TreeNode::getRightSon()
 {
-    return this->_rightSon;
+    return (this->_rightSon);
 }
 
 void TreeNode::print(){
-    std::cout<<this->getValue()<<"\n";
+    std::cout<<(this->getValue())<<"  ";
 }

@@ -1,5 +1,8 @@
 #include "Tree.hpp"
+#include "TreeNode.hpp"
 #include <iostream>
+#include <string>
+
 //constuctors
 ariel::Tree::Tree()
 {
@@ -11,45 +14,51 @@ void ariel::Tree::insert(int i)
 {
     if (this->contains(i))
     {
-        throw("there is already a member with the key!!");
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument("there is already a node with the key:" + nodeValue + " in this tree");
     }
-    else if (this->_root == nullptr)
+    if (this->_root == nullptr)
     {
         this->_root = new TreeNode(i);
     }
     else
     {
-        return (ariel::Tree::insert(this->_root, i));
+        ariel::Tree::insert(this->_root, i);
     }
 }
 
 void ariel::Tree::insert(TreeNode *current, int i)
 {
-   if(current->getValue() > i){
-       if(current->getLeftSon()==nullptr){
-           TreeNode *newNode = new TreeNode(i);
-           current->setLeftSon(newNode);
-       }
-       else{
-           ariel::Tree::insert((current->getLeftSon()), i);
-       }
-   }
-   else{
-       if(current->getRightSon()==nullptr){
-           TreeNode *newNode = new TreeNode(i);
-           current->setRightSon(newNode);
-       }
-       else{
-           ariel::Tree::insert((current->getRightSon()), i);
-       }
-   }
-
+    if (current->getValue() > i)
+    {
+        if (current->getLeftSon() == nullptr)
+        {
+            TreeNode *newNode = new TreeNode(i);
+            current->setLeftSon(newNode);
+        }
+        else
+        {
+            ariel::Tree::insert((current->getLeftSon()), i);
+        }
+    }
+    else
+    {
+        if (current->getRightSon() == nullptr)
+        {
+            TreeNode *newNode = new TreeNode(i);
+            current->setRightSon(newNode);
+        }
+        else
+        {
+            ariel::Tree::insert((current->getRightSon()), i);
+        }
+    }
 }
 
 //contains method
 bool ariel::Tree::contains(int i)
 {
-    return (Tree::contains(this->_root, i));
+    return (ariel::Tree::contains(this->_root, i));
 }
 
 bool ariel::Tree::contains(TreeNode *current, int i)
@@ -58,13 +67,17 @@ bool ariel::Tree::contains(TreeNode *current, int i)
     {
         return false;
     }
+    else if (current->getValue() == i)
+    {
+        return true;
+    }
     else if (current->getValue() > i)
     {
-        contains(current->getRightSon(), i);
+        return (contains(current->getLeftSon(), i));
     }
     else
     {
-        contains(current->getLeftSon(), i);
+        return (contains(current->getRightSon(), i));
     }
 }
 
@@ -87,12 +100,12 @@ int ariel::Tree::root()
     return (this->_root->getValue());
 }
 
-//contains method
 int ariel::Tree::parent(int i)
 {
-    if (!this->contains(i))
+    if (!(this->contains(i)))
     {
-        throw("no such node in this three");
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument("there is no such node with the key: " + nodeValue + " in this tree");
     }
     return (Tree::parent(this->_root, i));
 }
@@ -105,11 +118,11 @@ int ariel::Tree::parent(TreeNode *current, int i)
     }
     else if (current->getValue() > i)
     {
-        contains(current->getLeftSon(), i);
+        return (parent(current->getLeftSon(), i));
     }
     else
     {
-        contains(current->getRightSon(), i);
+        return (parent(current->getRightSon(), i));
     }
 }
 
@@ -117,7 +130,8 @@ int ariel::Tree::left(int i)
 {
     if (!this->contains(i))
     {
-        throw("no such node !");
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument("there is no node with the key: " + nodeValue + " in this tree");
     }
     return (Tree::left(this->_root, i));
 }
@@ -128,7 +142,8 @@ int ariel::Tree::left(TreeNode *current, int i)
     {
         if (current->getLeftSon() == nullptr)
         {
-            throw(" this node has no left son");
+            std::string nodeValue = std::to_string(i);
+            throw std::invalid_argument("the node with the key: " + nodeValue + " has no left son");
         }
         else
         {
@@ -137,11 +152,11 @@ int ariel::Tree::left(TreeNode *current, int i)
     }
     else if (current->getValue() > i)
     {
-        contains(current->getLeftSon(), i);
+        return (left(current->getLeftSon(), i));
     }
     else
     {
-        contains(current->getRightSon(), i);
+        return (left(current->getRightSon(), i));
     }
 }
 
@@ -149,7 +164,8 @@ int ariel::Tree::right(int i)
 {
     if (!this->contains(i))
     {
-        throw("no such node !");
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument("there is no node with the key: " + nodeValue + " in this tree");
     }
     return (Tree::right(this->_root, i));
 }
@@ -160,7 +176,8 @@ int ariel::Tree::right(TreeNode *current, int i)
     {
         if (current->getRightSon() == nullptr)
         {
-            throw(" this node has no right son");
+            std::string nodeValue = std::to_string(i);
+            throw std::invalid_argument("the node with the key: " + nodeValue + " has no right son");
         }
         else
         {
@@ -169,11 +186,11 @@ int ariel::Tree::right(TreeNode *current, int i)
     }
     else if (current->getValue() > i)
     {
-        contains(current->getLeftSon(), i);
+        return (right(current->getLeftSon(), i));
     }
     else
     {
-        contains(current->getRightSon(), i);
+        return (right(current->getRightSon(), i));
     }
 }
 
