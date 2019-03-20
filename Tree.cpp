@@ -99,35 +99,53 @@ int ariel::Tree::size(TreeNode *current)
 //root method
 int ariel::Tree::root()
 {
+    if (this->_root == nullptr)
+    {
+        throw std::invalid_argument("the tree is empty as for now - there is no root");
+    }
     return (this->_root->getValue());
 }
 
 //parent method
 int ariel::Tree::parent(int i)
 {
+    if (this->_root == nullptr || this->size() == 0)
+    {
+        throw std::invalid_argument("this tree is empty!");
+    }
     if (!(this->contains(i)))
     {
         std::string nodeValue = std::to_string(i);
         throw std::invalid_argument("there is no such node with the key: " + nodeValue + " in this tree");
     }
-    return (Tree::parent(this->_root, i));
+    if (this->_root->getValue() == i)
+    {
+        std::string nodeValue = std::to_string(i);
+        throw std::invalid_argument(nodeValue + " is the root of the tree - it has no parent");
+    }
+    return (ariel::Tree::parent(this->_root, i));
 }
 
 //parent private supporting method
 int ariel::Tree::parent(TreeNode *current, int i)
 {
-    if ((current->getLeftSon()->getValue() == i) || (current->getRightSon()->getValue() == i))
+    if (current == nullptr)
     {
-        return (current->getValue());
+        throw std::invalid_argument("no such node NULLPTR");
     }
-    else if (current->getValue() > i)
+    if ((current->getLeftSon() == nullptr) && (current->getRightSon() == nullptr))
     {
-        return (parent(current->getLeftSon(), i));
+        throw std::invalid_argument("no such node NULLSONS");
     }
-    else
+    if ((current->getLeftSon() != nullptr && current->getLeftSon()->getValue() == i) || (current->getRightSon() != nullptr && current->getRightSon()->getValue() == i))
     {
-        return (parent(current->getRightSon(), i));
+        return current->getValue();
     }
+    if (current->getValue() > i)
+        return ariel::Tree::parent(current->getLeftSon(), i);
+
+    if (current->getValue() < i)
+        return ariel::Tree::parent(current->getRightSon(), i);
 }
 
 //left method
@@ -212,22 +230,22 @@ void ariel::Tree::print()
 void ariel::Tree::print(TreeNode *current)
 {
     if (current == nullptr)
+    {
+        std::cout << std::endl;
         return;
-    current->print();
-    if (current->getLeftSon() != nullptr)
-    {
-        Tree::print(current->getLeftSon());
     }
-    if (current->getRightSon() != nullptr)
-    {
-        Tree::print(current->getRightSon());
-    }
+    /* first recur on left child */
+    print(current->getLeftSon());
+    /* then print the data of node */
+    std::cout << current->getValue() << " ";
+    /* now recur on right child */
+    print(current->getRightSon());
 }
 
 //remove method
 void ariel::Tree::remove(int i)
 {
-    
+
     if (this->_root == nullptr)
     {
         throw std::invalid_argument("you are trying to remove node from an empty tree");
@@ -241,7 +259,7 @@ void ariel::Tree::remove(int i)
 
     if (this->_root->getLeftSon() == nullptr && this->_root->getRightSon() == nullptr)
     {
-        this->_root=nullptr;
+        this->_root = nullptr;
         return;
     }
 
@@ -251,60 +269,40 @@ void ariel::Tree::remove(int i)
 //remove private supporting method
 void ariel::Tree::remove(TreeNode *current, int i)
 {
-    if (current->getLeftSon()->getValue() == i)
+    if (current->getValue() == i)
     {
-        if ((current->getLeftSon()->getLeftSon() == nullptr) && (current->getLeftSon()->getRightSon() == nullptr))
+        if ((current->getLeftSon() == nullptr) && (current->getRightSon() == nullptr))
         {
-            current->setLeftSon(nullptr);
+            current = nullptr;
             return;
         }
-        else if (((current->getLeftSon()->getLeftSon() != nullptr) && (current->getLeftSon()->getRightSon() == nullptr)))
+        else if (((current->getLeftSon() != nullptr) && (current->getRightSon() == nullptr)))
         {
-            TreeNode *temp = current->getLeftSon()->getLeftSon();
-            current->setLeftSon(temp);
-            current->getLeftSon()->setLeftSon(nullptr);
+            TreeNode *temp = current->getLeftSon();
+            *current = *temp;
             return;
         }
-        else if (((current->getLeftSon()->getLeftSon() == nullptr) && (current->getLeftSon()->getRightSon() != nullptr)))
+        else if (((current->getLeftSon() == nullptr) && (current->getRightSon() != nullptr)))
         {
-            TreeNode *temp = current->getLeftSon()->getRightSon();
-            current->setLeftSon(temp);
-            current->getLeftSon()->setRightSon(nullptr);
+
+            TreeNode *temp = current->getRightSon();
+            *current = *temp;
             return;
         }
         else
         {
-            int temp = ariel::Tree::findMin(current->getLeftSon()->getRightSon());
-            current->setValue(temp);
-            ariel::Tree::remove(temp);
-        }
-    }
-    if (current->getRightSon()->getValue() == i)
-    {
-        if ((current->getRightSon()->getLeftSon() == nullptr) && (current->getRightSon()->getRightSon() == nullptr))
-        {
-            current->setRightSon(nullptr);
+            TreeNode *temp = ariel::Tree::findMin(current->getRightSon());
+            TreeNode *parentOfMin = ariel::Tree::findParentOfMin(this->_root, temp->getValue());
+            if (current->getLeftSon() != nullptr)
+            {
+                temp->setLeftSon(current->getLeftSon());
+            }
+            if (parentOfMin->getValue() != current->getValue())
+            {
+                parentOfMin->setLeftSon(nullptr);
+            }
+            *current = *temp;
             return;
-        }
-        else if (((current->getRightSon()->getLeftSon() != nullptr) && (current->getRightSon()->getRightSon() == nullptr)))
-        {
-            TreeNode *temp = current->getRightSon()->getLeftSon();
-            current->setRightSon(temp);
-            current->getRightSon()->setLeftSon(nullptr);
-            return;
-        }
-        else if (((current->getRightSon()->getLeftSon() == nullptr) && (current->getRightSon()->getRightSon() != nullptr)))
-        {
-            TreeNode *temp = current->getRightSon()->getRightSon();
-            current->setRightSon(temp);
-            current->getRightSon()->setRightSon(nullptr);
-            return;
-        }
-        else
-        {
-            int temp = ariel::Tree::findMin(current->getRightSon()->getRightSon());
-            current->setValue(temp);
-            ariel::Tree::remove(temp);
         }
     }
     else if (current->getValue() > i)
@@ -315,19 +313,13 @@ void ariel::Tree::remove(TreeNode *current, int i)
     {
         remove(current->getRightSon(), i);
     }
-    else
-    {
-        int temp = ariel::Tree::findMin(current->getRightSon());
-        current->setValue(temp);
-        ariel::Tree::remove(temp);
-    }
 }
 //private supporting method to "help" remove method in case both children exist
-int ariel::Tree::findMin(TreeNode *current)
+TreeNode *ariel::Tree::findMin(TreeNode *current)
 {
     if (current->getLeftSon() == nullptr)
     {
-        return (current->getValue());
+        return (current);
     }
     else
     {
@@ -350,4 +342,25 @@ void ariel::Tree::destroyTree(TreeNode *current)
         ariel::Tree::destroyTree(current->getRightSon());
         delete current;
     }
+}
+TreeNode *ariel::Tree::findParentOfMin(TreeNode *current, int i)
+{
+    // std::cout << "CURRENT NODE======>>>>>" << current->getValue() << std::endl;
+    if (current == nullptr)
+    {
+        throw std::invalid_argument("no such node NULLPTR");
+    }
+    if ((current->getLeftSon() == nullptr) && (current->getRightSon() == nullptr))
+    {
+        throw std::invalid_argument("no such node NULLSONS");
+    }
+    if ((current->getLeftSon() != nullptr && current->getLeftSon()->getValue() == i) || (current->getRightSon() != nullptr && current->getRightSon()->getValue() == i))
+    {
+        return current;
+    }
+    if (current->getValue() > i)
+        return ariel::Tree::findParentOfMin(current->getLeftSon(), i);
+
+    if (current->getValue() < i)
+        return ariel::Tree::findParentOfMin(current->getRightSon(), i);
 }
