@@ -9,7 +9,6 @@ class Tree
 
 public:
     Tree();
-    Tree(TreeNode root);
     ~Tree();
     void insert(int i);
     void remove(int i);
@@ -32,6 +31,6 @@ private:
     void remove(TreeNode *current, int i);
     void destroyTree(TreeNode *current);
     TreeNode *findMin(TreeNode *current);
-    TreeNode *findParentOfMin(TreeNode *current,int i);
+    TreeNode *findParent(TreeNode *current,int i);
 };
 } // namespace ariel

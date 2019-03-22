@@ -245,64 +245,83 @@ void ariel::Tree::print(TreeNode *current)
 //remove method
 void ariel::Tree::remove(int i)
 {
-
+    //in case the tree is empty - > throw exception
     if (this->_root == nullptr)
     {
         throw std::invalid_argument("you are trying to remove node from an empty tree");
     }
-
+    //in case the tree doesnt hold asked value to remove - > throw exception
     if (!(this->contains(i)))
     {
         std::string nodeValue = std::to_string(i);
         throw std::invalid_argument("there is no node with the key: " + nodeValue + " in this tree");
     }
-
-    if (this->_root->getLeftSon() == nullptr && this->_root->getRightSon() == nullptr)
+    //in case asked value is the root - which has no "kids" (and the last "if" didnt catch us - which means asked node is the root)
+    if ((this->_root->getLeftSon() == nullptr) && (this->_root->getRightSon() == nullptr))
     {
         this->_root = nullptr;
         return;
     }
-
+    //in case all these conditions are false
     ariel::Tree::remove(this->_root, i);
 }
 
 //remove private supporting method
 void ariel::Tree::remove(TreeNode *current, int i)
 {
+    //if current node holds the value asked to remove - we'll adress some cases
     if (current->getValue() == i)
     {
+        //if the node has NO childern (and is not the root) - just remove it by making its father son -  a nullptr
         if ((current->getLeftSon() == nullptr) && (current->getRightSon() == nullptr))
         {
-            current = nullptr;
+            TreeNode *parent = ariel::Tree::findParent(this->_root, i);
+            if ((parent->getLeftSon() != nullptr) && (parent->getLeftSon()->getValue() == i))
+            {
+                parent->setLeftSon(nullptr);
+            }
+            else if (parent->getRightSon() != nullptr)
+            {
+                parent->setRightSon(nullptr);
+            }
             return;
         }
+        //in case the asked-to remove node has ONLY left son - > we'll push this son instead of the node
         else if (((current->getLeftSon() != nullptr) && (current->getRightSon() == nullptr)))
         {
-            TreeNode *temp = current->getLeftSon();
-            *current = *temp;
+            *current = *(current->getLeftSon());
             return;
         }
+        //in case the asked-to remove node has ONLY right son - > we'll push this son instead of the node
         else if (((current->getLeftSon() == nullptr) && (current->getRightSon() != nullptr)))
         {
 
-            TreeNode *temp = current->getRightSon();
-            *current = *temp;
+            *current = *(current->getRightSon());
             return;
         }
+        //in case the asked-to remove node has both left and right sons - >
+        //we'll find the minimum valued node from the right sub tree of this node sons - >
+        //if found node is the right son of the one we'll remove - >
+        //we'll attach the left subtree of sons from the about-to-be deleted node to the minimum valued one - >
+        //and push the minimum valued node as the "top"(first if)//////////////////////////////////////////
+        //if the minimum valued node is in the left sub tree of the first right son of the node we are about to delete ->
+        //we'll switch the values of them both and delete the minimum valued one (second if)
         else
         {
-            TreeNode *temp = ariel::Tree::findMin(current->getRightSon());
-            TreeNode *parentOfMin = ariel::Tree::findParentOfMin(this->_root, temp->getValue());
-            if (current->getLeftSon() != nullptr)
+            TreeNode *tempOfMinFromRight = ariel::Tree::findMin(current->getRightSon());
+            TreeNode *parentOfMin = ariel::Tree::findParent(this->_root, tempOfMinFromRight->getValue());
+            if (tempOfMinFromRight->getValue() == current->getRightSon()->getValue())
             {
-                temp->setLeftSon(current->getLeftSon());
+                tempOfMinFromRight->setLeftSon(current->getLeftSon());
+                *current = *(current->getRightSon());
+                return;
             }
-            if (parentOfMin->getValue() != current->getValue())
+            else
             {
+                current->setValue(tempOfMinFromRight->getValue());
                 parentOfMin->setLeftSon(nullptr);
+                return;
             }
-            *current = *temp;
-            return;
         }
     }
     else if (current->getValue() > i)
@@ -343,9 +362,8 @@ void ariel::Tree::destroyTree(TreeNode *current)
         delete current;
     }
 }
-TreeNode *ariel::Tree::findParentOfMin(TreeNode *current, int i)
+TreeNode *ariel::Tree::findParent(TreeNode *current, int i)
 {
-    // std::cout << "CURRENT NODE======>>>>>" << current->getValue() << std::endl;
     if (current == nullptr)
     {
         throw std::invalid_argument("no such node NULLPTR");
@@ -359,8 +377,8 @@ TreeNode *ariel::Tree::findParentOfMin(TreeNode *current, int i)
         return current;
     }
     if (current->getValue() > i)
-        return ariel::Tree::findParentOfMin(current->getLeftSon(), i);
+        return ariel::Tree::findParent(current->getLeftSon(), i);
 
     if (current->getValue() < i)
-        return ariel::Tree::findParentOfMin(current->getRightSon(), i);
+        return ariel::Tree::findParent(current->getRightSon(), i);
 }
