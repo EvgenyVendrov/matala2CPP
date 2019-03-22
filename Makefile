@@ -1,9 +1,9 @@
 #!make -f
 
-demo: TreeDemo.o Tree.o TreeNode.o
+demo: TreeDemo.o Tree.o
 	clang++-5.0 -std=c++17 $^ -o demo
 
-test: TreeTest.o Tree.o TreeNode.o
+test: TreeTest.o Tree.o
 	clang++-5.0 -std=c++17 $^ -o test
 
 %.o: %.cpp
