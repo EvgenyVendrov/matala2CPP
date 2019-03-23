@@ -184,8 +184,8 @@ int main()
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ariel::Tree testingTree;
     //filling the tree with the values  1 - > 8 - > 3 - > 64 - > 5 - > 216 - > 7 - > 512 - > 9 (by the order written)
-    //then checking whether tree's structure is similar to the one i got with the same values in this site:
-    //https://www.cs.usfca.edu/~galles/visualization/BST.html with left right and parent methods
+    //then checking whether tree's structure is maintained after all the inserts and removals - based on the algorithem listed here:
+    //http://www.algolist.net/Data_structures/Binary_search_tree/Removal
     for (int i = 1; i <= 9; i++)
     {
         if (i % 2 == 0)
@@ -225,6 +225,47 @@ int main()
         .CHECK_THROWS(testingTree.right(777))
         .CHECK_THROWS(testingTree.parent(777))
         .CHECK_THROWS(testingTree.left(777))
+        //now removing 64 - to check whether the structure maintained after removal
+        .CHECK_OK(testingTree.remove(64))
+        .CHECK_EQUAL(testingTree.size(), 8)
+        .CHECK_EQUAL(testingTree.contains(64), false)
+        .CHECK_EQUAL(testingTree.contains(1), true)
+        .CHECK_EQUAL(testingTree.contains(8), true)
+        .CHECK_EQUAL(testingTree.contains(3), true)
+        .CHECK_EQUAL(testingTree.contains(5), true)
+        .CHECK_EQUAL(testingTree.contains(216), true)
+        .CHECK_EQUAL(testingTree.contains(7), true)
+        .CHECK_EQUAL(testingTree.contains(512), true)
+        .CHECK_EQUAL(testingTree.contains(9), true)
+        //now checking tree's structure
+        .CHECK_EQUAL(testingTree.root(), 1)
+        .CHECK_EQUAL(testingTree.right(1), 8)
+        .CHECK_EQUAL(testingTree.right(8), 216)
+        .CHECK_EQUAL(testingTree.right(216), 512)
+        .CHECK_EQUAL(testingTree.left(216), 9)
+        .CHECK_EQUAL(testingTree.left(8), 3)
+        .CHECK_EQUAL(testingTree.right(3), 5)
+        .CHECK_EQUAL(testingTree.right(5), 7)
+        //now removing 8
+        .CHECK_OK(testingTree.remove(8))
+        .CHECK_EQUAL(testingTree.size(), 7)
+        .CHECK_EQUAL(testingTree.contains(64), false)
+        .CHECK_EQUAL(testingTree.contains(1), true)
+        .CHECK_EQUAL(testingTree.contains(8), false)
+        .CHECK_EQUAL(testingTree.contains(3), true)
+        .CHECK_EQUAL(testingTree.contains(5), true)
+        .CHECK_EQUAL(testingTree.contains(216), true)
+        .CHECK_EQUAL(testingTree.contains(7), true)
+        .CHECK_EQUAL(testingTree.contains(512), true)
+        .CHECK_EQUAL(testingTree.contains(9), true)
+        //now checking tree's structure
+        .CHECK_EQUAL(testingTree.root(), 1)
+        .CHECK_EQUAL(testingTree.right(1), 9)
+        .CHECK_EQUAL(testingTree.right(9), 216)
+        .CHECK_EQUAL(testingTree.right(216), 512)
+        .CHECK_EQUAL(testingTree.left(9), 3)
+        .CHECK_EQUAL(testingTree.right(3), 5)
+        .CHECK_EQUAL(testingTree.right(5), 7)
         .print();
     cout << "in left-right-parent tests - >"
          << "You have " << tc4.right() << " right answers and " << tc4.wrong() << " wrong answers so your grade is " << tc4.grade() << ". Great!" << endl;
