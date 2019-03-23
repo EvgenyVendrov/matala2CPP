@@ -125,6 +125,7 @@ int main()
         .CHECK_EQUAL(testingRemove.contains(insertArr[1]), false)
         .CHECK_EQUAL(testingRemove.size(), 12)
         //////////////////////////////////////////////////////
+        //tyring to remove a node already removed - > to check if the method will throw exception
         .CHECK_THROWS(testingRemove.remove(insertArr[19]))
         /////////////////////////////////////////////////////
         .CHECK_OK(testingRemove.remove(insertArr[17]))
@@ -180,30 +181,51 @@ int main()
     cout
         << "for full remove testing tree - >"
         << "You have " << tc3.right() << " right answers and " << tc3.wrong() << " wrong answers so your grade is " << tc3.grade() << ". Great!" << endl;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- ariel::Tree testingTree;
-    //testing all the methods on an empty tree
-    for (int i = 0; i < 20; i++)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ariel::Tree testingTree;
+    //filling the tree with the values  1 - > 8 - > 3 - > 64 - > 5 - > 216 - > 7 - > 512 - > 9 (by the order written)
+    //then checking whether tree's structure is similar to the one i got with the same values in this site:
+    //https://www.cs.usfca.edu/~galles/visualization/BST.html with left right and parent methods
+    for (int i = 1; i <= 9; i++)
     {
-        insertArr[i] = rand()*(i+1);
-        testingTree.insert(insertArr[i]);
+        if (i % 2 == 0)
+        {
+            testingTree.insert(i * i * i);
+        }
+        else
+        {
+            testingTree.insert(i);
+        }
     }
     badkan::TestCase tc4("left-right-parent test");
     tc4
-        .CHECK_THROWS(testingTree.parent(insertArr[0]))
-        .CHECK_THROWS(testingTree.left(insertArr[19]))
-        .CHECK_THROWS(testingTree.right(insertArr[19]))
-        .CHECK_OK(testingTree.parent(insertArr[13]))
-        .CHECK_OK(testingTree.parent(insertArr[7]))
-        .CHECK_OK(testingTree.parent(insertArr[18]))
-        .CHECK_OK(testingTree.parent(insertArr[6]))
-        .CHECK_OK(testingTree.parent(insertArr[3]))
-        .CHECK_OK(testingTree.parent(insertArr[2]))
-        .CHECK_OK(testingTree.parent(insertArr[19]))
-        .CHECK_OK(testingTree.left(insertArr[0]))
-        .CHECK_OK(testingTree.right(insertArr[0]))
+        //making sure the root has no parent
+        .CHECK_THROWS(testingTree.parent(1))
+        //making sure the lower nodes, i.e. "leafs" have no children
+        .CHECK_THROWS(testingTree.left(512))
+        .CHECK_THROWS(testingTree.right(512))
+        .CHECK_THROWS(testingTree.left(9))
+        .CHECK_THROWS(testingTree.right(9))
+        .CHECK_THROWS(testingTree.left(7))
+        .CHECK_THROWS(testingTree.right(7))
+        //checking that the structure is similar to the one i got from usfca simulator
+        .CHECK_THROWS(testingTree.left(3))
+        .CHECK_THROWS(testingTree.left(5))
+        .CHECK_THROWS(testingTree.left(1))
+        .CHECK_THROWS(testingTree.left(216))
+        .CHECK_EQUAL(testingTree.right(1), 8)
+        .CHECK_EQUAL(testingTree.right(8), 64)
+        .CHECK_EQUAL(testingTree.left(8), 3)
+        .CHECK_EQUAL(testingTree.right(64), 216)
+        .CHECK_EQUAL(testingTree.left(64), 9)
+        .CHECK_EQUAL(testingTree.right(216), 512)
+        .CHECK_EQUAL(testingTree.right(3), 5)
+        .CHECK_EQUAL(testingTree.right(5), 7)
+        //checking that for a non - exsitent node we'll get exception
+        .CHECK_THROWS(testingTree.right(777))
+        .CHECK_THROWS(testingTree.parent(777))
+        .CHECK_THROWS(testingTree.left(777))
         .print();
-
     cout << "in left-right-parent tests - >"
          << "You have " << tc4.right() << " right answers and " << tc4.wrong() << " wrong answers so your grade is " << tc4.grade() << ". Great!" << endl;
 }

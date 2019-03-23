@@ -1,6 +1,7 @@
 #include "Tree.hpp"
 //*******************Tree Node class implementation*******************
 
+//constructors for TreeNode class
 TreeNode::TreeNode()
 {
     this->_value = 0;
@@ -8,51 +9,54 @@ TreeNode::TreeNode()
     this->_rightSon = nullptr;
 }
 
-TreeNode::TreeNode(int value, TreeNode rightSon, TreeNode leftSon)
+TreeNode::TreeNode(const int value, const TreeNode rightSon, const TreeNode leftSon)
 {
     this->_value = value;
     *(this->_leftSon) = leftSon;
     *(this->_rightSon) = rightSon;
 }
 
-TreeNode::TreeNode(int value)
+TreeNode::TreeNode(const int value)
 {
     this->_value = value;
     this->_leftSon = nullptr;
     this->_rightSon = nullptr;
 }
 
-void TreeNode::setValue(int value)
+//setters
+void TreeNode::setValue(const int value)
 {
     this->_value = value;
 }
 
-void TreeNode::setLeftSon(TreeNode *leftSon)
+void TreeNode::setLeftSon(TreeNode *const leftSon)
 {
     this->_leftSon = leftSon;
 }
 
-void TreeNode::setRightSon(TreeNode *rightSon)
+void TreeNode::setRightSon(TreeNode *const rightSon)
 {
     this->_rightSon = rightSon;
 }
 
-int TreeNode::getValue()
+//getters
+int TreeNode::getValue() const
 {
     return (this->_value);
 }
 
-TreeNode *TreeNode::getLeftSon()
+TreeNode *TreeNode::getLeftSon() const
 {
     return (this->_leftSon);
 }
 
-TreeNode *TreeNode::getRightSon()
+TreeNode *TreeNode::getRightSon() const
 {
     return (this->_rightSon);
 }
 
-void TreeNode::print()
+//print method => printing one node
+void TreeNode::print() const
 {
     std::cout << (this->getValue()) << "  ";
 }
@@ -69,7 +73,7 @@ ariel::Tree::Tree()
     this->_sizeOfTree = 0;
 }
 
-void ariel::Tree::insert(int i)
+void ariel::Tree::insert(const int i)
 {
     //if the tree is empty - > create a new node with the value of input as the root
     if (this->isEmpty())
@@ -92,7 +96,7 @@ void ariel::Tree::insert(int i)
     }
 }
 
-bool ariel::Tree::contains(int i)
+bool ariel::Tree::contains(const int i) const
 {
     //if the tree is empty - > it dosen't contain any nodes - > return false
     if (this->isEmpty())
@@ -103,13 +107,13 @@ bool ariel::Tree::contains(int i)
     return (ariel::Tree::contains(this->_root, i));
 }
 
-int ariel::Tree::size()
+int ariel::Tree::size() const
 {
     //returning the static variable which saves how many nodes are in the tree
     return (ariel::Tree::_sizeOfTree);
 }
 
-int ariel::Tree::root()
+int ariel::Tree::root() const
 {
     //if the tree is empty - > throw exception
     if (this->isEmpty())
@@ -120,7 +124,7 @@ int ariel::Tree::root()
     return (this->_root->getValue());
 }
 
-int ariel::Tree::parent(int i)
+int ariel::Tree::parent(const int i) const
 {
     //if the tree is empty - > there are certainly no nodes - > throw exception
     if (this->isEmpty())
@@ -143,7 +147,7 @@ int ariel::Tree::parent(int i)
     return (ariel::Tree::parent(this->_root, i));
 }
 
-int ariel::Tree::left(int i)
+int ariel::Tree::left(const int i) const
 {
     //if input node isn't in the tree - > it certanliy has no left son - > throwing exception
     if (!this->contains(i))
@@ -155,7 +159,7 @@ int ariel::Tree::left(int i)
     return (Tree::left(this->_root, i));
 }
 
-int ariel::Tree::right(int i)
+int ariel::Tree::right(const int i) const
 {
     //if input node isn't in the tree - > it certanliy has no right son - > throwing exception
     if (!this->contains(i))
@@ -167,7 +171,8 @@ int ariel::Tree::right(int i)
     return (Tree::right(this->_root, i));
 }
 
-void ariel::Tree::print()
+//printing tree's node's IN ORDER 
+void ariel::Tree::print() const
 {
     if (this->isEmpty())
     {
@@ -177,7 +182,7 @@ void ariel::Tree::print()
     ariel::Tree::print(this->_root);
 }
 
-void ariel::Tree::remove(int i)
+void ariel::Tree::remove(const int i)
 {
     //in case the tree is empty - > throw exception
     if (this->isEmpty())
@@ -206,7 +211,8 @@ void ariel::Tree::remove(int i)
 ariel::Tree::~Tree()
 {
     //if the tree isn't empty - > go on to the private supporting method destroyTree(method overloading)
-    if (!this->isEmpty()){
+    if (!this->isEmpty())
+    {
         ariel::Tree::destroyTree(this->_root);
         this->_sizeOfTree = 0;
     }
@@ -217,7 +223,7 @@ ariel::Tree::~Tree()
 /////////////////////////////////////////////////////////////////
 
 //insert private supporting method
-void ariel::Tree::insert(TreeNode *current, int i)
+void ariel::Tree::insert(TreeNode *current, const int i)
 {
     //searching the right place to insert the input node - based on SBT structure:
     //if node's value is too large - > check if it has left son - > if it does - > keep recursively searching the right place to insert
@@ -255,7 +261,7 @@ void ariel::Tree::insert(TreeNode *current, int i)
 }
 
 //contains private supporting method
-bool ariel::Tree::contains(TreeNode *current, int i)
+bool ariel::Tree::contains(TreeNode *current, const int i) const
 {
     //if this current node has the value we're looking for - > return true
     if (current->getValue() == i)
@@ -284,7 +290,7 @@ bool ariel::Tree::contains(TreeNode *current, int i)
 }
 
 //parent private supporting method
-int ariel::Tree::parent(TreeNode *current, int i)
+int ariel::Tree::parent(TreeNode *current, const int i) const
 {
     //in case on of this current node sons has the value we're looking for - > return this node value as it's the father
     if ((current->getLeftSon() != nullptr && current->getLeftSon()->getValue() == i) || (current->getRightSon() != nullptr && current->getRightSon()->getValue() == i))
@@ -299,7 +305,7 @@ int ariel::Tree::parent(TreeNode *current, int i)
 }
 
 //left private supporting method
-int ariel::Tree::left(TreeNode *current, int i)
+int ariel::Tree::left(TreeNode *current,const int i) const
 {
     //if this current node has the value we're looking for - > check if it has a left son and return the answer
     if ((current->getValue() == i))
@@ -326,7 +332,7 @@ int ariel::Tree::left(TreeNode *current, int i)
 }
 
 //right private supporting method
-int ariel::Tree::right(TreeNode *current, int i)
+int ariel::Tree::right(TreeNode *current,const int i) const
 {
     //if this current node has the value we're looking for - > check if it has a right son and return the answer
     if ((current->getValue() == i))
@@ -353,20 +359,22 @@ int ariel::Tree::right(TreeNode *current, int i)
 }
 
 //print private supporting method
-void ariel::Tree::print(TreeNode *current)
+//recursive calls in this method are done in a way that allowds printing the tree - IN ORDER  
+void ariel::Tree::print(TreeNode *current) const
 {
-    /* first recur on left child */
+    //if current node is empty - > stop
     if (current == nullptr)
         return;
+    //recursive call to go left
     print(current->getLeftSon());
-    /* then print the data of node */
+    // print the value of current node 
     std::cout << current->getValue() << " ";
-    /* now recur on right child */
+    //recursive call to go right
     print(current->getRightSon());
 }
 
 //remove private supporting method
-void ariel::Tree::remove(TreeNode *current, int i)
+void ariel::Tree::remove(TreeNode *current, const int i)
 {
 
     //if current node holds the value asked to remove - we'll adress some cases
@@ -442,7 +450,7 @@ void ariel::Tree::remove(TreeNode *current, int i)
 
 //private supporting method to "help" remove method in case both children exist - >
 //finding the smallest valued node in given sub tree
-TreeNode *ariel::Tree::findMin(TreeNode *current)
+TreeNode *ariel::Tree::findMin(TreeNode *current) const
 {
     //if there is no more
     if (current->getLeftSon() == nullptr)
@@ -467,17 +475,9 @@ void ariel::Tree::destroyTree(TreeNode *current)
 }
 
 //private supporting method to "help" the remove method - >  find certain node's parent and return the pointer to it
-TreeNode *ariel::Tree::findParent(TreeNode *current, int i)
+TreeNode *ariel::Tree::findParent(TreeNode *current,const int i) const
 {
-    if (current == nullptr)
-    {
-        throw std::invalid_argument("no such node NULLPTR");
-    }
-    else if ((current->getLeftSon() == nullptr) && (current->getRightSon() == nullptr))
-    {
-        throw std::invalid_argument("no such node NULLSONS");
-    }
-    else if ((current->getLeftSon() != nullptr && current->getLeftSon()->getValue() == i) || (current->getRightSon() != nullptr && current->getRightSon()->getValue() == i))
+    if ((current->getLeftSon() != nullptr && current->getLeftSon()->getValue() == i) || (current->getRightSon() != nullptr && current->getRightSon()->getValue() == i))
     {
         return current;
     }
@@ -489,7 +489,7 @@ TreeNode *ariel::Tree::findParent(TreeNode *current, int i)
 }
 
 //private method to return if given tree is empty
-bool ariel::Tree::isEmpty()
+bool ariel::Tree::isEmpty() const
 {
     return (this->_sizeOfTree == 0);
 }
