@@ -1,2 +1,2 @@
- c++ implementation to binary search tree including unit testing<br/>
+ c++ implementation of binary search tree including unit testing<br/>
 submitter: Evgeny Vendrov (יבגני וונדרוב)
